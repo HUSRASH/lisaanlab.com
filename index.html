@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lisaan Lab — Learning Management System</title>
+<link rel="icon" href="/assets/mark.png">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="auth-wrap">
+  <aside class="auth-brand">
+    <div>
+      <img src="/assets/logo.png" alt="Lisaan Lab">
+      <h1>Learning Management System</h1>
+      <p>One live portal for students, tutors and administrators — attendance, assessments and results in real time.</p>
+      <ul class="auth-points">
+        <li><span class="dot"></span><div><b>Three levels</b> — Beginners, Intermediate and Advance, four semesters each.</div></li>
+        <li><span class="dot"></span><div><b>Live registers</b> — attendance published by the tutor and marked until the session ends.</div></li>
+        <li><span class="dot"></span><div><b>Instant scores</b> — tests and examinations marked the moment they are submitted.</div></li>
+        <li><span class="dot"></span><div><b>Full oversight</b> — every action supervised by the Super Administrator and the DG/CEO.</div></li>
+      </ul>
+    </div>
+    <div class="auth-foot">
+      <span id="sessionInfo">Academic session —</span> · Accounts are issued by the Super Administrator.
+    </div>
+  </aside>
+
+  <main class="auth-panel">
+    <div class="auth-card">
+      <h2>Sign in</h2>
+      <div class="sub">Students, Tutors and Administrators</div>
+      <div class="role-hint"><span>Student</span><span>Tutor</span><span>Administrator</span><span>DG / CEO</span></div>
+
+      <div class="alert alert-danger" id="err" hidden></div>
+      <div class="alert alert-ok" id="ok" hidden></div>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <div class="field">
+          <label class="label" for="identifier">Email address or ID</label>
+          <input class="input" id="identifier" name="identifier" type="text" required
+                 placeholder="name@lisaanlab.com  or  LSL/STU/2026/00001" autocomplete="username" autofocus>
+          <div class="hint">Staff sign in with their staff ID, students with their student ID.</div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="password">Password</label>
+          <div class="pw-wrap">
+            <input class="input" id="password" name="password" type="password" required
+                   placeholder="Enter your password" autocomplete="current-password">
+            <button class="pw-toggle" type="button" id="pwToggle" aria-label="Show password"
+                    aria-pressed="false" tabindex="0">Show</button>
+          </div>
+          <div class="hint">Tap <b>Show</b> to confirm what you typed before signing in.</div>
+        </div>
+
+        <button class="btn btn-lg btn-block" type="submit" id="submitBtn">Sign in</button>
+      </form>
+
+      <div class="hint center" style="margin-top:18px">
+        Forgotten your password? Contact the Super Administrator for a reset.
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const err = $('err'), ok = $('ok');
+
+function show(box, msg) { box.textContent = msg; box.hidden = false; }
+function clear() { err.hidden = true; ok.hidden = true; }
+
+// Show / hide password — prevents sign-in errors from mistyped passwords.
+const pw = $('password'), toggle = $('pwToggle');
+toggle.addEventListener('click', () => {
+  const showing = pw.type === 'text';
+  pw.type = showing ? 'password' : 'text';
+  toggle.textContent = showing ? 'Show' : 'Hide';
+  toggle.setAttribute('aria-pressed', String(!showing));
+  toggle.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  pw.focus();
+});
+
+fetch('/api/public/info').then(r => r.json()).then(d => {
+  if (d.academic_session) $('sessionInfo').textContent = 'Academic session ' + d.academic_session;
+  document.title = (d.institution || 'Lisaan Lab') + ' — Learning Management System';
+}).catch(() => {});
+
+// Already signed in? Go straight through.
+fetch('/api/auth/me', { credentials: 'same-origin' })
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { if (d && d.user) location.href = '/app'; })
+  .catch(() => {});
+
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clear();
+  const identifier = $('identifier').value.trim();
+  const password = pw.value;
+  if (!identifier || !password) return show(err, 'Enter your email or ID and your password.');
+
+  const btn = $('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ identifier, password }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Unable to sign in');
+    show(ok, `Welcome, ${data.user.full_name}. Opening your portal…`);
+    setTimeout(() => { location.href = '/app'; }, 450);
+  } catch (e2) {
+    show(err, e2.message);
+    btn.disabled = false;
+    btn.textContent = 'Sign in';
+    pw.select();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lisaan Lab LMS</title>
+<link rel="icon" href="/assets/mark.png">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <img src="/assets/mark.png" alt="">
+      <div>
+        <div class="t">LISAAN LAB</div>
+        <div class="s" id="sbRole">Portal</div>
+      </div>
+    </div>
+    <nav class="sb-nav" id="nav"></nav>
+    <div class="sb-foot">
+      <span class="avatar sm" id="sbAvatar">··</span>
+      <div style="min-width:0;flex:1">
+        <div class="nm" id="sbName">—</div>
+        <div class="rl" id="sbId">—</div>
+      </div>
+      <button class="btn-icon" id="logoutBtn" title="Sign out" style="color:#c8c9e2">⎋</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" id="burger">☰</button>
+      <div>
+        <div class="title" id="pageTitle">Dashboard</div>
+        <div class="sub" id="pageSub">—</div>
+      </div>
+      <div class="topbar-right">
+        <span class="badge" id="connBadge" title="Real-time link">connecting…</span>
+        <button class="btn-icon" id="bellBtn" title="Notifications" style="font-size:1.1rem;position:relative">
+          🔔<span id="bellCount" class="badge danger hidden" style="position:absolute;top:-4px;right:-6px;padding:1px 6px;font-size:.6rem"></span>
+        </button>
+        <button class="btn btn-sm btn-ghost" id="refreshBtn">Refresh</button>
+      </div>
+    </header>
+    <main class="content" id="view">
+      <div class="loader"><span class="spin"></span> Loading your portal…</div>
+    </main>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script src="/js/core.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/views-admin.js"></script>
+<script src="/js/views-oversight.js"></script>
+<script src="/js/views-tutor.js"></script>
+<script src="/js/views-student.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "lisaanlab-lms",
+  "version": "1.0.0",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "reset-super-password": "node scripts/reset-super-password.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Lisaan Lab — real-time Learning Management System",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.11.1",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "multer": "^2.4.0",
+    "ws": "^8.22.0"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
